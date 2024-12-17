@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Endless Typing Effect</title>
+  <style>
+    /* 기본 설정 */
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f4f4f4;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+    .text-container {
+      font-size: 30px;
+      color: #333;
+      line-height: 1.5;
+      max-width: 800px;
+      height: 100vh;
+      overflow-y: auto;
+      text-align: center;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="text-container" id="textContainer"></div>
+  <script>
+    const textContainer = document.getElementById("textContainer");
+
+    // 원본 텍스트
+    const originalText = `
+우린 불안 때문에 삶을 규칙적으로 만든다. 면밀하게 계획을 세우고 그 계획에 삶을 맞춘다.
+우리는 삶을 반복적이고 규칙적으로 움직이게 해서 가장 효율적인 시스템이 우리의 삶을 지배하게 만든다.
+습관과 규칙의 힘으로 살아가는 삶 말이다. 하지만 효율적인 삶이라니 그런 삶이 세상에 있을까.
+혹시 효율적인 삶이라는 건 늘 똑같이 살고 있기 때문에 죽기 전에 기억할 만한 멋진 날이 몇 개 되지 않는 삶을 말하는 것은 아닐까.
+    `;
+
+    // 텍스트 상태별 분리
+    const sanitizedText = originalText.replace(/\s+/g, '');
+    const textChunks = {
+      original: originalText.split(' '),
+      fourChar: sanitizedText.match(/.{1,4}/g),
+      twoChar: sanitizedText.match(/.{1,2}/g),
+    };
+
+    let stateIndex = 0;
+    const states = ['original', 'fourChar', 'twoChar'];
+    let textIndex = 0;
+
+    function appendText() {
+      const textArray = textChunks[states[stateIndex]];
+      const word = textArray[textIndex] + (stateIndex === 0 ? ' ' : '\n');
+
+      const span = document.createElement("span");
+      span.textContent = word;
+      textContainer.appendChild(span);
+
+      textIndex++;
+      if (textIndex >= textArray.length) textIndex = 0;
+
+      textContainer.scrollTop = textContainer.scrollHeight;
+
+      setTimeout(appendText, 200);
+    }
+
+    document.body.addEventListener("click", () => {
+      stateIndex = (stateIndex + 1) % states.length;
+      textIndex = 0;
+      textContainer.textContent = "";
+      appendText();
+    });
+
+    appendText();
+  </script>
+</body>
+</html>
